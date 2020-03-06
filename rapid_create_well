@@ -1,0 +1,16 @@
+# Boot strap \
+exec tclsh "$0" "$@"
+
+set wellName $env(PG_WELL)
+set projectName $env(PG_PROJECT)
+
+puts "well: $wellName "
+puts "project name: $projectName"
+catch { well_new commands = {
+	value_set parent = PROMPT name = TEXT value = $wellName 
+  	value_set parent = PROMPT name = OK action = OK
+	} 
+} 
+catch { well_save  } 
+catch { well_close } 
+

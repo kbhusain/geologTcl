@@ -1,0 +1,199 @@
+# Boot strap \
+exec tclsh "$0" "$@"
+
+
+set enginePath "/peasd/geolog/RAPID"
+global enginePath
+
+set f2 [open [file join $enginePath logs grtdh.log] w]
+close $f2
+
+
+# Write out debug info to log file for debugging 
+proc debugme {str} {
+    global enginePath
+    set f [open [file join $enginePath logs grtdh.log] a]
+    puts $f "grtdh.tclsh ==> $str"
+    puts "grtdh.tclsh ==> $str"
+    close $f
+}
+
+set wellName [lindex $argv 0]
+set env(PG_WELL) $wellName 
+set project [lindex $argv 1]
+set env(PG_PROJECT) $project             
+set setName [lindex $argv 2] 
+set env(MINSET) $setName             
+set inputFile [lindex $argv 3] 
+set env(DRTDH_DATA) $inputFile
+set inputSpec [lindex $argv 4] 
+set env(DRTDH_SPEC) $inputSpec
+
+
+debugme "$env(MINSITE)"
+debugme "$env(PG_PROJECT)"
+debugme "$env(PG_WELL)"
+debugme "$env(MINSET)"
+debugme "data -> $env(DRTDH_DATA)"
+debugme "format --> $env(DRTDH_SPEC)"
+debugme "whence $env(ACTIVEDIR)"
+set activeDir $env(ACTIVEDIR)
+
+set dateStr [clock format [clock seconds] -format %m_%d_%y_%p]
+set lwell [ string tolower $wellName ] 
+set f_las_file [file join $activeDir h_${lwell}_glas.names]
+debugme "Opening $f_las_file"
+set f_las_names [open $f_las_file w ]
+puts $f_las_names "# spec: LAS name translation specification."
+puts $f_las_names ""
+puts $f_las_names "NAME_GEOLOG_SET = ${setName}"
+puts $f_las_names "NAME_GEOLOG_CONSTANT = {constant}"
+puts $f_las_names "NAME_GEOLOGOG = {log}"
+puts $f_las_names ""
+puts $f_las_names "NAME_CONTRACTOROG = {log}"
+puts $f_las_names "NAME_CONTRACTOR_CONSTANT = {constant} "
+puts $f_las_names ""
+puts $f_las_names "NAME_CONTRACTOR: NAME_GEOLOG="
+#-------------------------- Halliburton NAMES HERE 
+
+
+#-------------------------- For CALI
+puts $f_las_names "CALCX CALI"
+puts $f_las_names "CALI CALI"
+puts $f_las_names "LCAL CALI"
+puts $f_las_names "DCAV CALI"
+puts $f_las_names "DCAV_RT CALI"
+puts $f_las_names "CALZ CALI"
+puts $f_las_names "DCAV4 CALI"
+puts $f_las_names "DCAV4_RT CALI"
+
+#-------------------------- For TNPH
+puts $f_las_names "NPHI TNPH"
+puts $f_las_names "CN TNPH"
+puts $f_las_names "CNC TNPH"
+puts $f_las_names "TNPH_ADN_RT TNPH"
+#puts $f_las_names "NPLX TNPH"
+puts $f_las_names "NPLCOR TNPH"
+puts $f_las_names "TNPL TNPH"
+puts $f_las_names "TNPLCOR TNPH"
+puts $f_las_names "NLIMNF TNPH"
+
+#-------------------------- For RHO
+puts $f_las_names "RHOZ RHO"
+puts $f_las_names "RHOM RHO"
+puts $f_las_names "ZDEN RHO"
+puts $f_las_names "RHOB RHO"
+puts $f_las_names "ROBB RHO"
+puts $f_las_names "ROBB_RT RHO"
+puts $f_las_names "ROBB_DH_RT RHO"
+puts $f_las_names "ROBU RHO"
+puts $f_las_names "ROBU_RT RHO"
+puts $f_las_names "ROBU_DH_RT RHO"
+puts $f_las_names "BDCX RHO"
+puts $f_las_names "SBD2 RHO"
+puts $f_las_names "ZDNC RHO"
+puts $f_las_names "SBDC RHO"
+
+#-------------------------- For GR
+
+puts $f_las_names "SGR  GR"
+puts $f_las_names "HSGR  GR"
+puts $f_las_names "GRSL  GR"
+puts $f_las_names "ECGR  GR"
+puts $f_las_names "GR_IMP  GR"
+puts $f_las_names "GR_IMP_RT  GR"
+puts $f_las_names "GRCX  GR"
+puts $f_las_names "SGRC  GR"
+puts $f_las_names "HAGR GR"
+puts $f_las_names "NBGRCX GR"
+
+puts $f_las_names "ZCOR DRHO"
+puts $f_las_names "HDRA DRHO"
+puts $f_las_names "DRHB DRHO"
+puts $f_las_names "DRHB_DH_RT DRHO"
+
+puts $f_las_names "DT  DTC"
+puts $f_las_names "DTCO3  DTC"
+puts $f_las_names "DTCO  DTC"
+puts $f_las_names "DT4P  DTC"
+puts $f_las_names "DTCO_MH_DH DTC"
+
+puts $f_las_names "RMLL  RXO"
+puts $f_las_names "RXOZ RXO"
+puts $f_las_names "MSFL RXO"
+
+
+# PEXY	B/E	PE, PEF, PEFZ, PEB, PEB_RT, SNP2
+# puts $f_las_names "
+
+#-------------------------- Common Names HERE
+puts $f_las_names "P40H_UNC_RT RESD"
+puts $f_las_names "P40H_UNC_RT RESD"
+puts $f_las_names "P40H RESD"
+puts $f_las_names "P40H_RT RESD"
+puts $f_las_names "P34H_RT RESD"
+puts $f_las_names "P34H_UNC_RT RESD"
+puts $f_las_names "P22H RESM"
+puts $f_las_names "P22H_RT RESM"
+puts $f_las_names "P22H_UNC_RT RESM"
+puts $f_las_names "P28H_UNC_RT RESM"
+puts $f_las_names "P28H RESM"
+puts $f_las_names "P28H_RT RESM"
+puts $f_las_names "P16H_UNC_RT RESS"
+puts $f_las_names "P16H RESS"
+puts $f_las_names "P16H_RT RESS"
+puts $f_las_names "P10H_RT RESS"
+puts $f_las_names "P10H RESS"
+puts $f_las_names "P10H_UNC_RT RESS"
+puts $f_las_names "P16 RESS"
+puts $f_las_names "RPCHX RESD"
+puts $f_las_names "RPCLX RESM"
+puts $f_las_names "RPCSHX RESS"
+
+puts $f_las_names "SGRC  GR_COR"
+puts $f_las_names "SROP  ROP"
+puts $f_las_names "SBD2  RHOB"
+puts $f_las_names "SCO2  DRHO"
+
+puts $f_las_names "PEF  PEXY"
+puts $f_las_names "SNP2  PEXY"
+puts $f_las_names "PE PEXY"
+puts $f_las_names "PEB_RT PEXY"
+puts $f_las_names "PEB PEXY"
+puts $f_las_names "DPEX PEXY"
+
+puts $f_las_names "SESP RESS"
+puts $f_las_names "SEMP RESM"
+puts $f_las_names "SEDP RESD"
+puts $f_las_names "TNPL NPHI"
+puts $f_las_names "DEPT DEPTH"
+puts $f_las_names "RDPH RESD"
+puts $f_las_names "RMPH RESM"
+puts $f_las_names "RMPH RESS"
+puts $f_las_names "ROP ROP"
+puts $f_las_names "GRCA GR_COR"
+puts $f_las_names "DRHO DRHO"
+puts $f_las_names "RHOB RHOB"
+puts $f_las_names "ROP5 ROP"
+puts $f_las_names "GR_IMP_RT GR_COR"
+puts $f_las_names "ARC_GR_RT GR_COR"
+puts $f_las_names "GR_MXW_RT GR_COR"
+
+close $f_las_names
+debugme "Closed $f_las_file"
+catch { chmod 0777 $f_las_file } 
+debugme "Opening   $wellName"
+#-----------------------------------------------------------------------------------------------
+# 
+#-----------------------------------------------------------------------------------------------
+catch { well_open well=$wellName  } 
+debugme "Opened   $wellName"
+debugme "Step0   $inputSpec"
+tp_from_flat_ascii spec_flat_ascii_format=${inputSpec} ignore_extra_args=TRUE file_in=${inputFile} set_default=${setName} | tp_name_translate name_translation=${f_las_file} | log_dbms mode=store well=$wellName 
+# } result
+catch { well_save  } 
+#debugme "after generic_caller.tclsh result: $result"
+
+#catch { file delete $f_las_file } 
+
+#-----------------------------------------------------------------------------------------------

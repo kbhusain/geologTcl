@@ -1,0 +1,66 @@
+# Boot strap \
+exec tclsh "$0" "$@"
+
+
+set enginePath "/peasd/geolog/RAPID"
+global enginePath
+
+set f2 [open [file join $enginePath logs rapid_data_loader.log] w]
+close $f2
+
+
+# Write out debug info to log file for debugging 
+proc debugme {str} {
+    global enginePath
+    set f [open [file join $enginePath logs rapid_data_loader.log] a]
+    puts $f "rapid_data_loader.tclsh ==> $str"
+    puts "rapid_data_loader.tclsh ==> $str"
+    close $f
+}
+
+set wellName [lindex $argv 0]
+set env(PG_WELL) $wellName 
+set project [lindex $argv 1]
+set env(PG_PROJECT) $project           
+set inputFile [lindex $argv 2] 
+#set setName [lindex $argv 3] 
+#set env(MINSET) ${setName}              
+
+debugme "Using site  $env(PG_SITE)"
+debugme "Using Project $env(PG_PROJECT)"
+debugme "The well is $env(PG_WELL)"
+#debugme "for this MINSET $env(MINSET)"
+debugme "from  $env(ACTIVEDIR)"
+set activeDir $env(ACTIVEDIR)
+
+#set lwell [ string tolower $wellName ] 
+#set f_names_translation [file join $activeDir r_${lwell}_glas.names]
+#debugme "Opening $f_names_translation"
+#set f_las_names [open $f_names_translation w ]
+#puts $f_las_names "# spec: LAS name translation specification."
+#puts $f_las_names ""
+#puts $f_las_names "NAME_GEOLOG_SET = ${setName}"
+#puts $f_las_names "NAME_GEOLOG_CONSTANT = {constant}"
+#puts $f_las_names "NAME_GEOLOG_LOG = {log}"
+#puts $f_las_names ""
+#puts $f_las_names "NAME_CONTRACTOR: NAME_GEOLOG="
+#puts $f_las_names " "
+#close $f_las_names
+#debugme "Closed $f_names_translation"
+#catch { chmod 0777 $f_names_translation } 
+#debugme "Opening   $wellName"
+
+#-----------------------------------------------------------------------------------------------
+#  okay load the data with no translation.
+#-----------------------------------------------------------------------------------------------
+catch { well_open well=$wellName  } 
+#-----------------------------------------------------------------------------------------------
+# Use the line if you just want to load in the DRTDH data in the witsml or csv file 
+#tp_from_flat_ascii spec_flat_ascii_format=${inputSpec} ignore_extra_args=TRUE file_in=${inputFile} set_default=${setName} | tp_name_translate name_translation=${f_names_translation} | log_dbms mode=store well=$wellName 
+#-----------------------------------------------------------------------------------------------
+# set cmd "tp_from_las file_in=${inputFile} | tp_name_translate name_translation=${f_names_translation} | log_dbms mode=store project=$project well=$wellName "
+set cmd "tp_from_las file_in=${inputFile} | log_dbms mode=store project=$project well=$wellName "
+catch {eval $cmd} result
+debugme $result
+catch { well_save  } 
+catch { well_close  } 

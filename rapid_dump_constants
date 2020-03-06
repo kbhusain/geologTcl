@@ -1,0 +1,21 @@
+
+#--------------------------------------------------------------------------------------------
+# This is the generic run command for any RAPID module
+# Note the environment variables you need for each run.
+#--------------------------------------------------------------------------------------------
+global env
+
+set wellName $env(PG_WELL)         
+set projectName $env(PG_PROJECT)      
+set specFile $env(SPEC_FILE)
+set filename $env(OUT_FILE)
+set ql_set $env(GEOLOG_SET)
+
+well_open well = $wellName
+#puts "Default Set : $ql_set"
+
+log_dbms mode=query well = $wellName set = $ql_set select=_set._all | tp_to_log_ascii file_out = $filename
+
+catch {chmod 0777 $filename }
+catch {well_close}
+
